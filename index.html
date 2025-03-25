@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payslip</title>
+    <style>
+       /* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #334155;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Main container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* Header section */
+.header {
+    background: linear-gradient(to right, #1e40af, #3b82f6);
+    color: #ffffff;
+    padding: 15px;
+    text-align: center;
+}
+
+.company-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.payslip-title {
+    font-size: 18px;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+/* Content area */
+.search-container {
+    background: #f8fafc;
+    padding: 24px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+.search-container input,
+.search-container select {
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    flex: 1;
+    min-width: 150px;
+    font-size: 15px;
+    color: #334155;
+    transition: all 0.2s ease;
+}
+
+.search-container input:focus,
+.search-container select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.search-btn {
+    background-color: #1e40af;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    min-width: 120px;
+}
+
+.search-btn:hover {
+    background-color: #1e3a8a;
+}
+
+/* Payslip content */
+.payslip-content {
+    padding: 30px;
+    display: none;
+}
+
+.no-payslip-message {
+    text-align: center;
+    padding: 50px 30px;
+    color: #64748b;
+    font-size: 18px;
+    display: none;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    margin: 30px;
+    background: #f8fafc;
+}
+
+/* Section styles */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #3b82f6;
+}
+
+.details-section {
+    margin-bottom: 32px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.detail-item {
+    margin-bottom: 5px;
+}
+
+.detail-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.detail-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+/* Calculations section */
+.calculations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.earnings, .deductions {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Total section */
+.total-section {
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    font-weight: 500;
+}
+
+.total-row:last-child {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e40af;
+    border-top: 2px solid #cbd5e1;
+    margin-top: 10px;
+    padding-top: 15px;
+}
+
+/* Print button */
+.print-btn {
+    background-color: #1e40af;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 30px auto 10px;
+    text-align: center;
+}
+
+.print-btn:hover {
+    background-color: #1e3a8a;
+}
+
+/* Print styles */
+@media print {
+    body {
+        background-color: white;
+        padding: 0;
+    }
+    
+    .container {
+        box-shadow: none;
+        max-width: 100%;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .payslip-content {
+        display: block !important;
+        padding: 20px 0;
+    }
+    
+    .total-section {
+        break-inside: avoid;
+    }
+    
+    .calculations {
+        break-inside: avoid;
+    }
+    
+    .header {
+        background: #1e40af !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        border-radius: 6px;
+    }
+    
+    .header {
+        padding: 20px;
+    }
+    
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container input,
+    .search-container select,
+    .search-btn {
+        width: 100%;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .calculations {
+        grid-template-columns: 1fr;
+    }
+    
+    .payslip-content {
+        padding: 20px 15px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company-name">Astrolite Tech Solution</div>
+            <div class="payslip-title">Payslip Viewer</div>
+        </div>
+
+        <div class="search-container no-print">
+            <input type="text" id="employeeId" placeholder="Enter Employee ID">
+            <input type="month" id="payslipMonthInput">
+            <button class="search-btn" onclick="fetchPayslip()">View Payslip</button>
+        </div>
+
+        <div id="noPayslipMessage" class="no-payslip-message">
+            No payslip found for the selected month.
+        </div>
+
+        <div id="payslipContent" class="payslip-content">
+            <div class="header">
+                <div class="payslip-title">Payslip for <span id="payslipMonth"></span></div>
+            </div>
+
+            <div class="details-section">
+                <h3 class="section-title">Employee Details</h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Employee Name</div>
+                        <div class="detail-value" id="empName"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Employee ID</div>
+                        <div class="detail-value" id="empId"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Employee Code</div>
+                        <div class="detail-value" id="empCode"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Designation</div>
+                        <div class="detail-value" id="designation"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">PAN</div>
+                        <div class="detail-value" id="pan"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Bank Account</div>
+                        <div class="detail-value" id="accountNo"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Bank Name</div>
+                        <div class="detail-value" id="bankName"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Working Days</div>
+                        <div class="detail-value" id="workingDays"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Days Attended</div>
+                        <div class="detail-value" id="daysAttended"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculations">
+                <div class="earnings">
+                    <h3 class="section-title">Earnings</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Basic Salary</div>
+                        <div class="detail-value" id="basicSalary"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Educational Allowance</div>
+                        <div class="detail-value" id="educationAllowance"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">House Rent Allowance</div>
+                        <div class="detail-value" id="hra"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Bonus</div>
+                        <div class="detail-value" id="bonus"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Other Allowance</div>
+                        <div class="detail-value" id="otherAllowance"></div>
+                    </div>
+                </div>
+
+                <div class="deductions">
+                    <h3 class="section-title">Deductions</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Professional Tax</div>
+                        <div class="detail-value" id="professionalTax"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <span>Total Earnings:</span>
+                    <span id="totalIncome"></span>
+                </div>
+                <div class="total-row">
+                    <span>Total Deductions:</span>
+                    <span id="totalDeductions"></span>
+                </div>
+                <div class="total-row">
+                    <span>Net Salary:</span>
+                    <span id="netSalary"></span>
+                </div>
+            </div>
+
+            <button class="print-btn no-print" onclick="window.print()">Print Payslip</button>
+        </div>
+    </div>
+
+    <script>
+      // Helper function to format currency
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+    }).format(amount);
+}
+
+// Set the default month to current month
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    document.getElementById('payslipMonthInput').value = `${year}-${month.toString().padStart(2, '0')}`;
+});
+
+function fetchPayslip() {
+    const employeeId = document.getElementById('employeeId').value.trim();
+    const selectedMonth = document.getElementById('payslipMonthInput').value;
+    
+    if (!employeeId) {
+        alert('Please enter an Employee ID');
+        return;
+    }
+    
+    if (!selectedMonth) {
+        alert('Please select a month');
+        return;
+    }
+
+    // Use the same key format as in the generator page
+    const storageKey = `payslip_${employeeId}_${selectedMonth}`;
+    const payslipData = JSON.parse(localStorage.getItem(storageKey));
+    
+    const payslipContent = document.getElementById('payslipContent');
+    const noPayslipMessage = document.getElementById('noPayslipMessage');
+    
+    if (!payslipData) {
+        // No payslip found for this employee and month
+        payslipContent.style.display = 'none';
+        noPayslipMessage.style.display = 'block';
+        return;
+    }
+    
+    // Payslip found, display it
+    payslipContent.style.display = 'block';
+    noPayslipMessage.style.display = 'none';
+    
+    // Format date
+    const date = new Date(selectedMonth);
+    const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    document.getElementById('payslipMonth').textContent = monthYear;
+
+    // Fill in employee details
+    document.getElementById('empName').textContent = payslipData.empName;
+    document.getElementById('empId').textContent = employeeId;
+    document.getElementById('empCode').textContent = payslipData.empCode;
+    document.getElementById('designation').textContent = payslipData.designation;
+    document.getElementById('pan').textContent = payslipData.pan;
+    document.getElementById('accountNo').textContent = payslipData.accountNo;
+    document.getElementById('bankName').textContent = payslipData.bankName;
+    document.getElementById('workingDays').textContent = payslipData.workingDays;
+    document.getElementById('daysAttended').textContent = payslipData.daysAttended;
+
+    // Fill in earnings
+    document.getElementById('basicSalary').textContent = formatCurrency(payslipData.basicSalary);
+    document.getElementById('educationAllowance').textContent = formatCurrency(payslipData.educationAllowance);
+    document.getElementById('hra').textContent = formatCurrency(payslipData.hra);
+    document.getElementById('bonus').textContent = formatCurrency(payslipData.bonus);
+    document.getElementById('otherAllowance').textContent = formatCurrency(payslipData.otherAllowance);
+
+    // Fill in deductions
+    document.getElementById('professionalTax').textContent = formatCurrency(payslipData.professionalTax);
+
+    // Fill in totals
+    document.getElementById('totalIncome').textContent = formatCurrency(payslipData.totalIncome);
+    document.getElementById('totalDeductions').textContent = formatCurrency(payslipData.totalDeductions);
+    document.getElementById('netSalary').textContent = formatCurrency(payslipData.netSalary);
+}
+    </script>
+</body>
+</html>
